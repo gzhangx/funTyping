@@ -5,6 +5,15 @@ import './App.css';
 import {getInitState, doStateHandling} from './components/handleTyppingState';
 import getVerses from './components/getVerses';
 
+const timerCb = {
+  cb : null,
+}
+const wpmTim = ()=>{
+  if (timerCb.cb) timerCb.cb();
+  setTimeout(wpmTim, 200);
+};
+setTimeout(wpmTim, 100);
+
 function App() {
   const [state, dispatch] = useReducer((state,action)=>action(state), getInitState());
   doStateHandling(state, dispatch);  
@@ -14,7 +23,7 @@ function App() {
   const [elaspedTime, setElaspedTime] = useState(0);
   //const wpm = state.wordCount === 0 ? 0 : state.wordCount/(state.wordCountChangeTime.getTime() - state.startTime.getTime())*1000*60;  
 
-  const wpmTim = ()=>{
+  timerCb.cb = () =>{
     if (state.wordCount > 0) {
       if (!state.allDone)
         setWpm(state.wordCount/(state.wordCountChangeTime.getTime() - state.startTime.getTime())*1000*60);    
@@ -23,9 +32,7 @@ function App() {
       if (!state.allDone)
         setElaspedTime(Date.now()-state.startTime.getTime());
     }else setElaspedTime(0);
-    setTimeout(wpmTim, 200);
-  };
-  setTimeout(wpmTim, 100);
+  }
 
   const started = count > 0;
   const initButtonStyle = {};  
@@ -42,7 +49,7 @@ function App() {
         // }).then(r=>{
         //  console.log(r);
         //})        
-        const str = 'test'; //getVerses().join(' ');
+        const str = getVerses().join(' ');
         //const str = 'The quick brown fox jump over the something something new; and let\'s play somethig cool!';
         dispatch(state=>({
           ...getInitState(),

@@ -77,7 +77,7 @@ export function getInitState() {
       toText:[],
       wordEnds: [],
       nextCharPos: 0,
-      startTime: new Date(),
+      startTime: null,
       wordCount: 0,
       wordCountChangeTime: new Date(),
       count : 0,

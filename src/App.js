@@ -55,20 +55,14 @@ function App() {
           ...getInitState(),
           toText: [...str],
         }));        
-      }}>Init</button>    :null
+      }}>Start Test</button>    :null
     }
         
-        <p>ElaspedTime: { (elaspedTime/1000).toFixed(1)}</p>
+        <p>Words: {state.wordCount}  WPM: {wpm.toFixed(2)} Seconds: { (elaspedTime/1000).toFixed(1)}</p>
         <p>
           {
           state.toText.map((c,j)=><span key={j} style={{color: j>=state.nextCharPos?'black':'yellow', textDecorationLine:j>=state.nextCharPos?'':'line-through'}}>{c}</span>)
         }
-        </p>
-        <p>
-          World Count = {state.wordCount}  WPM ={wpm.toFixed(2)}
-        </p>
-        <p>
-          count = {state.nextCharPos} alldone= {allDone}
         </p>        
         <div>        
           <input type='text' text={state.curText.join('')}></input>

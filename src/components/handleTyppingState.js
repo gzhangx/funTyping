@@ -5,8 +5,9 @@ export function doStateHandling(state, dispatch) {
     let nextCharPos = state.nextCharPos;
   let wordCount = state.wordCount;  
   let count = state.count;
-  let allDone = state.allDone;  
+  let allDone = state.allDone;
   const curText = state.curText.slice();
+  const badText = state.badText.slice();
   const wordEnds = state.wordEnds;
   let wordCountChangeTime = state.wordCountChangeTime;
   keyHandler(key => { 
@@ -16,6 +17,7 @@ export function doStateHandling(state, dispatch) {
         if (nextCharPos > 0) nextCharPos--;
       }
       curText.pop();
+      badText.pop();
       
       while (wordEnds.length) {
         if (wordEnds[wordEnds.length - 1].position >= nextCharPos) {
@@ -34,6 +36,8 @@ export function doStateHandling(state, dispatch) {
       if (nextCharPos < state.toText.length) {
         if (key === state.toText[nextCharPos] && nextCharPos=== curText.length) {
           nextCharPos++;
+        } else {
+          badText.push(key);
         }
         
         if (key.toString().match(letterMatch) && nextCharPos > 0) {
@@ -57,23 +61,25 @@ export function doStateHandling(state, dispatch) {
       count = count+1;
     }
     dispatch(state=>{     
-        return ({      
+      return ({
         ...state,
         nextCharPos,
-        startTime: nextCharPos===1? new Date() : state.startTime,
+        startTime: nextCharPos === 1 ? new Date() : state.startTime,
         curText,
+        badText,
         wordCount,
         wordCountChangeTime,
         count,
         allDone,
-      })
+      });
     });    
   });  
 }
 
 export function getInitState() {
     return {
-      curText:[],
+      curText: [],
+      badText: [],
       toText:[],
       wordEnds: [],
       nextCharPos: 0,

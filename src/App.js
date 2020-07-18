@@ -49,7 +49,7 @@ function App() {
         // }).then(r=>{
         //  console.log(r);
         //})        
-        const str = getVerses().join(' ');
+        const str = getVerses(10).join(' ');
         //const str = 'The quick brown fox jump over the something something new; and let\'s play somethig cool!';
         dispatch(state=>({
           ...getInitState(),
@@ -61,7 +61,14 @@ function App() {
         <p>Words: {state.wordCount}  WPM: {wpm.toFixed(2)} Seconds: { (elaspedTime/1000).toFixed(1)}</p>
         <p>
           {
-          state.toText.map((c,j)=><span key={j} style={{color: j>=state.nextCharPos?'black':'yellow', textDecorationLine:j>=state.nextCharPos?'':'line-through'}}>{c}</span>)
+            state.toText.reduce((acc, c, j) => {
+              const ret = <span key={j} style={{ color: j >= state.nextCharPos ? 'yellow' : 'black', textDecorationLine: j >= state.nextCharPos ? '' : 'line-through' }}>{c}</span>
+              if (j === state.nextCharPos && state.badText.length) {
+                acc.push(<span key={j+"bad"} style={{ color: 'red', textDecorationLine: 'line-through' }}>{state.badText.join('')}</span>)
+              }
+              acc.push(ret);
+              return acc;
+            },[])
         }
         </p>        
         <div>        

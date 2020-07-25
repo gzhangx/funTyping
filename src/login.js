@@ -16,6 +16,6 @@ export default (props) => {
     };
 
     return (
-        <MicrosoftLogin clientId={"b6ff1150-a1cd-4040-bc6e-4f43340a8f4d"}  redirectUri={redirectUri} authCallback={authHandler} />
+        <MicrosoftLogin clientId={"b6ff1150-a1cd-4040-bc6e-4f43340a8f4d"}  redirectUri={redirectUriP} authCallback={authHandler} />
     );
 };

@@ -7,7 +7,7 @@ const KeyHandler = cb => {
         if ((e.ctrlKey || e.metaKey) && e.keyCode === 70) {         
           e.preventDefault();
         }
-          if (key === 'Backspace' || key == 'Control') e.preventDefault();
+          if (key === 'Backspace' || key === 'Control') e.preventDefault();
           setKeyPressed(key);
           if (cb) cb(key);
       };

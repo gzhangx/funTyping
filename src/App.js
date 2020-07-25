@@ -4,6 +4,8 @@ import './App.css';
 
 import {getInitState, doStateHandling} from './components/handleTyppingState';
 import getVerses from './components/getVerses';
+import Login from './login';
+import { getLogin } from './util';
 
 const timerCb = {
   cb : null,
@@ -16,11 +18,12 @@ setTimeout(wpmTim, 100);
 
 function App() {
   const [state, dispatch] = useReducer((state,action)=>action(state), getInitState());
-  doStateHandling(state, dispatch);  
+  doStateHandling(state, dispatch);
 
   const {count, allDone} = state;
   const [wpm, setWpm] = useState(0);
   const [elaspedTime, setElaspedTime] = useState(0);
+  const [loginInfo, setLoginInfo] = useState(getLogin() || {});
   //const wpm = state.wordCount === 0 ? 0 : state.wordCount/(state.wordCountChangeTime.getTime() - state.startTime.getTime())*1000*60;  
 
   timerCb.cb = () => {
@@ -43,8 +46,10 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">    
+        {!loginInfo.name && <Login />}
+        {loginInfo.name && <span>Welcome {loginInfo.name}</span>}
       {(!started || allDone)?
-      <button  style={initButtonStyle} onClick={()=>{        
+      <button  style={initButtonStyle} onClick={()=>{
         console.log('========================= INIT ===========================');
         //const verses = request.get('https://bible-api.com/romans%202').then(res=>{
         //  return res.body.verses.map(r=>r.text.trim().replace(/“/g,'"').replace(/’/g,'\''));

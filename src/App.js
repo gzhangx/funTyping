@@ -23,14 +23,16 @@ function App() {
   const [elaspedTime, setElaspedTime] = useState(0);
   //const wpm = state.wordCount === 0 ? 0 : state.wordCount/(state.wordCountChangeTime.getTime() - state.startTime.getTime())*1000*60;  
 
-  timerCb.cb = () =>{
-    if (state.wordCount > 0) {
-      if (!state.allDone)
-        setWpm(state.wordCount/(state.wordCountChangeTime.getTime() - state.startTime.getTime())*1000*60);    
-    }
+  timerCb.cb = () => {
     if (state.startTime) {
+      const elasptedTime = Date.now() - state.startTime.getTime();
+      if (state.wordCount > 0 && elasptedTime > 1000) {
+        if (!state.allDone)
+          setWpm(state.wordCount / (elasptedTime)*1000*60);    
+      }
+    
       if (!state.allDone)
-        setElaspedTime(Date.now()-state.startTime.getTime());
+        setElaspedTime(elasptedTime);
     }else setElaspedTime(0);
   }
 
@@ -64,7 +66,7 @@ function App() {
             state.toText.reduce((acc, c, j) => {
               const ret = <span key={j} style={{ color: j >= state.nextCharPos ? 'yellow' : 'black', textDecorationLine: j >= state.nextCharPos ? '' : 'line-through' }}>{c}</span>
               if (j === state.nextCharPos && state.badText.length) {
-                acc.push(<span key={j+"bad"} style={{ color: 'red', textDecorationLine: 'line-through' }}>{state.badText.join('')}</span>)
+                acc.push(<span key={j + "bad"} style={{ color: 'red', textDecorationLine: 'line-through' }}>{state.badText.map(c => c === ' ' ?'\u00a0':c).join('')}</span>)
               }
               acc.push(ret);
               return acc;

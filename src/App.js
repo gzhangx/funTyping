@@ -32,10 +32,13 @@ function App() {
       const wpm = parseFloat((state.wordCount / (elasptedTime) * 1000 * 60).toFixed(2));      
       setInfoText('Saving your stats .....');
       request.post('https://hebrewssender.azurewebsites.net/saveFunTypingRecord').send(
-        Object.assign({}, loginInfo, { wpm })
+        Object.assign({}, loginInfo, { wpm, wordCount: state.wordCount })
       ).then(sret => {
-        setInfoText('Stats saved');
         console.log(sret);
+        if (!sret.body && !sret.body.ok) {
+          setInfoText('Error saving status, please check ');
+        }else
+          setInfoText('Stats saved');
       }).catch(err => {
         setInfoText('');
         console.log(err);
@@ -76,7 +79,7 @@ function App() {
         //})
             setInfoText('');
             setErrorText('');
-        const str = getVerses(1).join(' ');
+        const str = getVerses(10).join(' ');
         //const str = 'The quick brown fox jump over the something something new; and let\'s play somethig cool!';
         dispatch(state=>({
           ...getInitState(),

@@ -22,6 +22,7 @@ function App() {
   const [wpm, setWpm] = useState(0);
   const [elaspedTime, setElaspedTime] = useState(0);
   const [loginInfo, setLoginInfo] = useState(getLogin() || {});
+  const [errorText, setErrorText] = useState();
   //const wpm = state.wordCount === 0 ? 0 : state.wordCount/(state.wordCountChangeTime.getTime() - state.startTime.getTime())*1000*60;  
   doStateHandling(state, dispatch, () => {
     if (loginInfo && loginInfo.name) {
@@ -33,6 +34,7 @@ function App() {
         console.log(sret);
       }).catch(err => {
         console.log(err);
+        setErrorText(err.message);
       });
     }
   });
@@ -66,8 +68,9 @@ function App() {
         //  return res.body.verses.map(r=>r.text.trim().replace(/“/g,'"').replace(/’/g,'\''));
         // }).then(r=>{
         //  console.log(r);
-        //})        
-        const str = getVerses(10).join(' ');
+        //})
+            setErrorText('');
+        const str = getVerses(1).join(' ');
         //const str = 'The quick brown fox jump over the something something new; and let\'s play somethig cool!';
         dispatch(state=>({
           ...getInitState(),
@@ -75,7 +78,9 @@ function App() {
         }));        
       }}>Start Test</button>    :null
     }
-        
+        {
+          errorText && <span style={{ color: 'red' }}>{errorText}</span>
+        }
         <p>Words: {state.wordCount}  WPM: {wpm.toFixed(2)} Seconds: { (elaspedTime/1000).toFixed(1)}</p>
         <p>
           {

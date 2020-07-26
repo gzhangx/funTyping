@@ -23,16 +23,21 @@ function App() {
   const [elaspedTime, setElaspedTime] = useState(0);
   const [loginInfo, setLoginInfo] = useState(getLogin() || {});
   const [errorText, setErrorText] = useState();
+  const [infoText, setInfoText] = useState();
+  
   //const wpm = state.wordCount === 0 ? 0 : state.wordCount/(state.wordCountChangeTime.getTime() - state.startTime.getTime())*1000*60;  
   doStateHandling(state, dispatch, () => {
     if (loginInfo && loginInfo.name) {
       const elasptedTime = Date.now() - state.startTime.getTime();             
       const wpm = parseFloat((state.wordCount / (elasptedTime) * 1000 * 60).toFixed(2));      
+      setInfoText('Saving your stats .....');
       request.post('https://hebrewssender.azurewebsites.net/saveFunTypingRecord').send(
         Object.assign({}, loginInfo, { wpm })
       ).then(sret => {
+        setInfoText('Stats saved');
         console.log(sret);
       }).catch(err => {
+        setInfoText('');
         console.log(err);
         setErrorText(err.message);
       });
@@ -69,6 +74,7 @@ function App() {
         // }).then(r=>{
         //  console.log(r);
         //})
+            setInfoText('');
             setErrorText('');
         const str = getVerses(1).join(' ');
         //const str = 'The quick brown fox jump over the something something new; and let\'s play somethig cool!';
@@ -80,6 +86,9 @@ function App() {
     }
         {
           errorText && <span style={{ color: 'red' }}>{errorText}</span>
+        }
+        {
+          infoText && <span>{infoText}</span>
         }
         <p>Words: {state.wordCount}  WPM: {wpm.toFixed(2)} Seconds: { (elaspedTime/1000).toFixed(1)}</p>
         <p>

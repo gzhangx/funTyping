@@ -92,8 +92,11 @@ function App() {
           errorText && <span style={{ color: 'red' }}>{errorText}</span>
         }
         {
-          infoText && <span>{infoText}</span>
-        }
+          infoText && <div>
+            <span> {infoText}</span>
+            <a href='https://docs.google.com/spreadsheets/d/1fcSgz1vEh5I3NS5VXCx1BHitD_AAQrmUCXNJPPSyDYk'>Records</a>   
+          </div>
+        }        
         <p>Words: {state.wordCount}  WPM: {wpm.toFixed(2)} Seconds: { (elaspedTime/1000).toFixed(1)}</p>
         <p>
           {

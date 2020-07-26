@@ -24,6 +24,7 @@ function App() {
   const [loginInfo, setLoginInfo] = useState(getLogin() || {});
   const [errorText, setErrorText] = useState();
   const [infoText, setInfoText] = useState();
+  const [verseCount, setVerseCount] = useState(10);
   
   //const wpm = state.wordCount === 0 ? 0 : state.wordCount/(state.wordCountChangeTime.getTime() - state.startTime.getTime())*1000*60;  
   doStateHandling(state, dispatch, () => {
@@ -32,7 +33,7 @@ function App() {
       const wpm = parseFloat((state.wordCount / (elasptedTime) * 1000 * 60).toFixed(2));      
       setInfoText('Saving your stats .....');
       request.post('https://hebrewssender.azurewebsites.net/saveFunTypingRecord').send(
-        Object.assign({}, loginInfo, { wpm, wordCount: state.wordCount })
+        Object.assign({}, loginInfo, { wpm, wordCount: state.wordCount, verseCount })
       ).then(sret => {
         console.log(sret);
         if (!sret.body && !sret.body.ok) {
@@ -79,7 +80,7 @@ function App() {
         //})
             setInfoText('');
             setErrorText('');
-        const str = getVerses(10).join(' ');
+            const str = getVerses(parseInt(verseCount)).join(' ');
         //const str = 'The quick brown fox jump over the something something new; and let\'s play somethig cool!';
         dispatch(state=>({
           ...getInitState(),
@@ -108,6 +109,9 @@ function App() {
         </p>        
         <div>        
           <input type='text' text={state.curText.join('')}></input>
+          <div>verses:</div> <input type='text' value={verseCount} onChange={e => {
+            setVerseCount(e.target.value);
+          }}></input>
         {
           false && state.curText.map((c,i)=><span key={i}>
             {c}

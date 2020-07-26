@@ -1,11 +1,12 @@
 import React , { useReducer, useState } from 'react';
 import './App.css';
-//import request from 'superagent';
+import request from 'superagent';
 
 import {getInitState, doStateHandling} from './components/handleTyppingState';
 import getVerses from './components/getVerses';
 import Login from './login';
 import { getLogin } from './util';
+import request from 'https';
 
 const timerCb = {
   cb : null,
@@ -17,14 +18,25 @@ const wpmTim = ()=>{
 setTimeout(wpmTim, 100);
 
 function App() {
-  const [state, dispatch] = useReducer((state,action)=>action(state), getInitState());
-  doStateHandling(state, dispatch);
-
+  const [state, dispatch] = useReducer((state,action)=>action(state), getInitState());  
   const {count, allDone} = state;
   const [wpm, setWpm] = useState(0);
   const [elaspedTime, setElaspedTime] = useState(0);
   const [loginInfo, setLoginInfo] = useState(getLogin() || {});
   //const wpm = state.wordCount === 0 ? 0 : state.wordCount/(state.wordCountChangeTime.getTime() - state.startTime.getTime())*1000*60;  
+  doStateHandling(state, dispatch, () => {
+    if (loginInfo && loginInfo.name) {
+      const elasptedTime = Date.now() - state.startTime.getTime();             
+      const wpm = parseFloat((state.wordCount / (elasptedTime) * 1000 * 60).toFixed(2));      
+      request.post('https://hebrewssender.azurewebsites.net/saveFunTypingRecord').send(
+        Object.assign({}, loginInfo, { wpm })
+      ).then(sret => {
+        console.log(sret);
+      }).catch(err => {
+        console.log(err);
+      });
+    }
+  });
 
   timerCb.cb = () => {
     if (state.startTime) {
@@ -46,7 +58,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">    
-        {!loginInfo.name && <Login />}
+        {!loginInfo.name && <Login setLoginInfo={setLoginInfo}/>}
         {loginInfo.name && <span>Welcome {loginInfo.name}</span>}
       {(!started || allDone)?
       <button  style={initButtonStyle} onClick={()=>{

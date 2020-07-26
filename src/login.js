@@ -11,7 +11,12 @@ export default (props) => {
             console.log(data.authResponseWithAccessToken.account);
             const { userName, name } = data.authResponseWithAccessToken.account;
             console.log(`username=${userName} name=${name}`);
-            saveLogin({ userName, name });
+            const info = {
+                username,
+                name,
+            };
+            saveLogin(info);
+            props.setLoginInfo(info);
         }
     };
 

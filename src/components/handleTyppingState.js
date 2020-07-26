@@ -1,7 +1,7 @@
 import keyHandler from './keyHandler';
 const letterMatch = /^[A-Za-z0-9]$/;
 
-export function doStateHandling(state, dispatch) {
+export function doStateHandling(state, dispatch, doneCb) {
     let nextCharPos = state.nextCharPos;
   let wordCount = state.wordCount;  
   let count = state.count;
@@ -56,6 +56,7 @@ export function doStateHandling(state, dispatch) {
       }
       if (nextCharPos >= state.toText.length) {
         allDone = true;
+        if (doneCb) doneCb();
       }
       curText.push(key);
       count = count+1;

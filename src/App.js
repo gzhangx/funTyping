@@ -6,7 +6,6 @@ import {getInitState, doStateHandling} from './components/handleTyppingState';
 import getVerses from './components/getVerses';
 import Login from './login';
 import { getLogin } from './util';
-import request from 'https';
 
 const timerCb = {
   cb : null,

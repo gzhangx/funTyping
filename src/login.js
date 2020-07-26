@@ -12,7 +12,7 @@ export default (props) => {
             const { userName, name } = data.authResponseWithAccessToken.account;
             console.log(`username=${userName} name=${name}`);
             const info = {
-                username,
+                userName,
                 name,
             };
             saveLogin(info);

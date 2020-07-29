@@ -38,8 +38,22 @@ function App() {
         console.log(sret);
         if (!sret.body && !sret.body.ok) {
           setInfoText('Error saving status, please check ');
-        }else
-          setInfoText('Stats saved');
+        } else {
+          setInfoText('Sending email');
+          request.post('https://hebrewssender.azurewebsites.net/sendGJEmails').send({
+            subject: `FunTyping Result: ${loginInfo.name} verses=${verseCount} WPM=${wpm}`,
+            text: `${loginInfo.name} WPM=${wpm}
+
+            username: ${loginInfo.userName}
+            verses: ${verseCount}
+            words: ${state.wordCount}
+            seconds: ${(elaspedTime / 1000).toFixed(2)}
+            sheet: https://docs.google.com/spreadsheets/d/1fcSgz1vEh5I3NS5VXCx1BHitD_AAQrmUCXNJPPSyDYk
+            `
+          }).then(() => {
+            setInfoText('States saved and emailed');
+          })
+        }
       }).catch(err => {
         setInfoText('');
         console.log(err);

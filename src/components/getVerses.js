@@ -5,5 +5,5 @@ function getRandomNumber(max, min=0) {
 }
 export default function getVerses(max=3) {
     let from = getRandomNumber(verses.length-max);
-    return verses.slice(from, from+ max).map(s=>s.replace(/’/g,'\'').replace(/”/g,'"'));
+    return verses.slice(from, from + max).map(s => s.replace(/’/g, '\'').replace(/”/g, '"').replace(/[^ -~]+/g, ''));
 }

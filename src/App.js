@@ -25,22 +25,25 @@ function App() {
   const [errorText, setErrorText] = useState();
   const [infoText, setInfoText] = useState();
   const [verseCount, setVerseCount] = useState(10);
+
+  const [needSaveStats, setNeedSaveStats] = useState(false);
   
   //const wpm = state.wordCount === 0 ? 0 : state.wordCount/(state.wordCountChangeTime.getTime() - state.startTime.getTime())*1000*60;  
-  doStateHandling(state, dispatch, () => {
+  const saveStatsToSheet = () => {
     if (loginInfo && loginInfo.name) {
-      const elasptedTime = Date.now() - state.startTime.getTime();             
-      const wpm = parseFloat((state.wordCount / (elasptedTime) * 1000 * 60).toFixed(2));      
+      const elasptedTime = Date.now() - state.startTime.getTime();
+      const wpm = parseFloat((state.wordCount / (elasptedTime) * 1000 * 60).toFixed(2));
       setInfoText('Saving your stats .....');
-      request.post('https://hebrewssender.azurewebsites.net/saveFunTypingRecord').send(
+      return request.post('https://hebrewssender.azurewebsites.net/saveFunTypingRecord').send(
         Object.assign({}, loginInfo, { wpm, wordCount: state.wordCount, verseCount })
       ).then(sret => {
         console.log(sret);
         if (!sret.body && !sret.body.ok) {
           setInfoText('Error saving status, please check ');
+          return false;
         } else {
           setInfoText('Sending email');
-          request.post('https://hebrewssender.azurewebsites.net/sendGJEmails').send({
+          return request.post('https://hebrewssender.azurewebsites.net/sendGJEmails').send({
             subject: `FunTyping Result: ${loginInfo.name} verses=${verseCount} WPM=${wpm}`,
             text: `${loginInfo.name} WPM=${wpm}
 
@@ -52,15 +55,26 @@ function App() {
             `
           }).then(() => {
             setInfoText('States saved and emailed');
+            return true;
           })
         }
       }).catch(err => {
         setInfoText('');
         console.log(err);
         setErrorText(err.message);
+        return false;
       });
     }
-  });
+    return true;
+  }
+
+  const saveStatsToSheetAndHandleError = async () => {
+    const res = await saveStatsToSheet();
+    if (!res) {
+      setNeedSaveStats(true);
+    }
+  }
+  doStateHandling(state, dispatch, saveStatsToSheetAndHandleError);
 
   timerCb.cb = () => {
     if (state.startTime) {
@@ -111,6 +125,9 @@ function App() {
             <a href='https://docs.google.com/spreadsheets/d/1fcSgz1vEh5I3NS5VXCx1BHitD_AAQrmUCXNJPPSyDYk'>Records</a>   
           </div>
         }        
+        {
+          needSaveStats && <button onClick={saveStatsToSheetAndHandleError}>Save</button>
+        }
         <p>Words: {state.wordCount}  WPM: {wpm.toFixed(2)} Seconds: { (elaspedTime/1000).toFixed(1)}</p>
         <p>
           {
